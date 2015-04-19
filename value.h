@@ -9,35 +9,38 @@
 #include "func.h"
 #include "number.h"
 
-typedef enum {		/* type			constructor	Data in Value	Implicit prototype 	*/
-	VT_UNDEF,		/* undefined	none		none			none 				*/
-	VT_NULL,		/* null			none		none			none 				*/
-	VT_BOOL,		/* boolean		Boolean		d.val			none 				*/
-	VT_NUMBER,		/* number		Number		d.num			Number.prototype 	*/
-	VT_STRING,		/* string		String		d.str			String.prototype 	*/
-	VT_OBJECT,		/* object		Object		d.obj			Object.prototype 	*/
-	VT_VARIABLE		/* lvalue		none		d.lval			none 				*/
+typedef enum  		/* type			constructor	Data in Value	Implicit prototype 	*/
+{
+    VT_UNDEF,		/* undefined	none		none			none 				*/
+    VT_NULL,		/* null			none		none			none 				*/
+    VT_BOOL,		/* boolean		Boolean		d.val			none 				*/
+    VT_NUMBER,		/* number		Number		d.num			Number.prototype 	*/
+    VT_STRING,		/* string		String		d.str			String.prototype 	*/
+    VT_OBJECT,		/* object		Object		d.obj			Object.prototype 	*/
+    VT_VARIABLE		/* lvalue		none		d.lval			none 				*/
 } vtype;
 
 typedef unsigned int udid;
 
 /* note: UserData example, see filesys.ex.c */
-typedef struct UserData {
-	udid id;
-	void *data;
-} UserData;
+typedef struct UserData
+    {
+    udid id;
+    void *data;
+    } UserData;
 
 typedef void (*SSUDFree)(void *data);
 typedef int (*SSUDIsTrue)(void *data);
 typedef int (*SSUDIsEqu)(void *data1, void *data2);
 
 #define MAX_UDTYPE	1024
-typedef struct UserDataReg {
-	const char *name;
-	SSUDFree freefun;
-	SSUDIsTrue istrue;
-	SSUDIsEqu isequ;
-} UserDataReg;
+typedef struct UserDataReg
+    {
+    const char *name;
+    SSUDFree freefun;
+    SSUDIsTrue istrue;
+    SSUDIsEqu isequ;
+    } UserDataReg;
 
 #define OM_READONLY		0x1		/* ecma read-only */
 #define OM_DONTEMU		0x2		/* ecma emumerable */
@@ -53,7 +56,7 @@ typedef struct UserDataReg {
  *
  *         - an unichar * pointed here
  *         | ObjKey also pointed here
- *         | 
+ *         |
  * | 4 | 4 | unichars |
  *   |   |
  *   |   - len of unichars
@@ -65,72 +68,80 @@ typedef unichar ObjKey;
 #define OBJKEY(_len) struct{int flag;UNISTR(_len) str;}
 
 /* Scope chain */
-typedef struct ScopeChain {
-	struct Value **chains;	/* values(objects) */
-	int chains_cnt;			/* count */
-} ScopeChain;
+typedef struct ScopeChain
+    {
+    struct Value **chains;	/* values(objects) */
+    int chains_cnt;			/* count */
+    } ScopeChain;
 
 /* Function obj */
 /* a FuncObj is a raw function with own scope chain */
-typedef struct FuncObj {
-	struct Func *func;
-	ScopeChain *scope;
-} FuncObj;
+typedef struct FuncObj
+    {
+    struct Func *func;
+    ScopeChain *scope;
+    } FuncObj;
 
 /* IterObj, use only in for-in statement */
-typedef struct IterObj {
-	ObjKey **keys;
-	int size;
-	int count;
-	int iter;
-} IterObj;
+typedef struct IterObj
+    {
+    ObjKey **keys;
+    int size;
+    int count;
+    int iter;
+    } IterObj;
 
-typedef enum {
-	OT_OBJECT,		/* common object, not use d */
-	OT_BOOL,		/* Boolean object, use d.val */
-	OT_NUMBER,		/* Number object, use d.num */
-	OT_STRING,		/* String object, use d.str */
-	OT_FUNCTION,	/* Function object, use d.fobj */
-	OT_REGEXP,		/* RegExp object, use d.robj */
-	OT_ITER,		/* Iter object, use d.iobj */
-	OT_USERDEF		/* UserDefined object, use d.uobj */
+typedef enum
+{
+    OT_OBJECT,		/* common object, not use d */
+    OT_BOOL,		/* Boolean object, use d.val */
+    OT_NUMBER,		/* Number object, use d.num */
+    OT_STRING,		/* String object, use d.str */
+    OT_FUNCTION,	/* Function object, use d.fobj */
+    OT_REGEXP,		/* RegExp object, use d.robj */
+    OT_ITER,		/* Iter object, use d.iobj */
+    OT_USERDEF		/* UserDefined object, use d.uobj */
 } otype;
 
-typedef struct Object {
-	otype ot;					/* object type */
-	union {						/* see above */
-		int val;
-		double num;
-		unichar *str;
-		FuncObj *fobj;
-		regex_t *robj;
-		IterObj *iobj;
-		UserData *uobj;
-	} d;
-	/*
-	struct Value *acc_length;	 for array object, faster access 
-	int acc_length_flag;		 keyflag of length value 
-	*/
+typedef struct Object
+    {
+    otype ot;					/* object type */
+    union  						/* see above */
+        {
+        int val;
+        double num;
+        unichar *str;
+        FuncObj *fobj;
+        regex_t *robj;
+        IterObj *iobj;
+        UserData *uobj;
+        } d;
+    /*
+    struct Value *acc_length;	 for array object, faster access
+    int acc_length_flag;		 keyflag of length value
+    */
 
-	/* faster access keys of object */
-	struct Value *_acc_values[8];
-	ObjKey *_acc_keys[8];
-	
-	rbtree tree;				/* store key-value */
-	int __refcnt;				/* reference count */
-	struct Value *__proto__;	/* implicit prototype */
-} Object;
+    /* faster access keys of object */
+    struct Value *_acc_values[8];
+    ObjKey *_acc_keys[8];
 
-typedef struct Value {
-	vtype vt;					/* value type */
-	union {						/* see above */
-		int val;
-		double num;
-		unichar *str;
-		Object *obj;
-		struct Value *lval;
-	} d;
-} Value;
+    rbtree tree;				/* store key-value */
+    int __refcnt;				/* reference count */
+    struct Value *__proto__;	/* implicit prototype */
+    } Object;
+
+typedef struct Value
+    {
+    vtype vt;					/* value type */
+    union  						/* see above */
+        {
+        int val;
+        double num;
+        unichar *str;
+        Object *obj;
+        struct Value *lval;
+        } d;
+    } Value;
 
 #define objref_inc(obj) do {					\
 	(obj)->__refcnt++;							\
@@ -233,13 +244,13 @@ Value *value_object_lookup_array(Value *args, int index, int *flag);
 
 Value *value_object_utils_new_object();
 void object_utils_insert(Object *obj, const unichar *key, Value *val,
-							   int deletable, int writable, int emuable);
+                         int deletable, int writable, int emuable);
 void value_object_utils_insert(Value *target, const unichar *key, Value *val,
-							   int deletable, int writable, int emuable);
+                               int deletable, int writable, int emuable);
 void object_utils_insert_array(Object *obj, int key, Value *val,
-							   int deletable, int writable, int emuable);
+                               int deletable, int writable, int emuable);
 void value_object_utils_insert_array(Value *target, int key, Value *val,
-							   int deletable, int writable, int emuable);
+                                     int deletable, int writable, int emuable);
 
 udid userdata_register(UserDataReg *udreg);
 UserData *userdata_new(udid id, void *data);

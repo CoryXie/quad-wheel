@@ -3,12 +3,12 @@
 
 typedef unsigned short unichar;
 
-/* for declare unicode static string 
+/* for declare unicode static string
  * in unicode supported compiler, use wchar_t and L"string" may save a lot of works
  * any way, you should declare a static unicode string like this:
- * 
+ *
  * static UNISTR(5) hello = { 5, { 'h', 'e', 'l', 'l', 'o' } };
- * 
+ *
  * comment: always declare one more byte for objkey
  */
 #define UNISTR(_len) struct{int len;unichar unistr[(_len)+1];}

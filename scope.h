@@ -3,11 +3,12 @@
 
 #include "unichar.h"
 
-typedef struct strs {
-	unichar **strings;
-	int count;
-	int _size;
-} strs;
+typedef struct strs
+    {
+    unichar **strings;
+    int count;
+    int _size;
+    } strs;
 
 strs *strs_new();
 void strs_push(strs *ss, const unichar *string);

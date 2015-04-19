@@ -36,72 +36,73 @@
 /* Tokens.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     STRING = 258,
-     IDENTIFIER = 259,
-     IF = 260,
-     ELSE = 261,
-     FOR = 262,
-     IN = 263,
-     WHILE = 264,
-     DO = 265,
-     CONTINUE = 266,
-     SWITCH = 267,
-     CASE = 268,
-     DEFAULT = 269,
-     BREAK = 270,
-     FUNC = 271,
-     RETURN = 272,
-     LOCAL = 273,
-     NEW = 274,
-     DELETE = 275,
-     TRY = 276,
-     CATCH = 277,
-     FINALLY = 278,
-     THROW = 279,
-     WITH = 280,
-     UNDEF = 281,
-     _TRUE = 282,
-     _FALSE = 283,
-     _THIS = 284,
-     ARGUMENTS = 285,
-     FNUMBER = 286,
-     REGEXP = 287,
-     __DEBUG = 288,
-     MIN_PRI = 289,
-     ARGCOMMA = 290,
-     DIVAS = 291,
-     BXORAS = 292,
-     BORAS = 293,
-     BANDAS = 294,
-     URSHFAS = 295,
-     RSHFAS = 296,
-     LSHFAS = 297,
-     MODAS = 298,
-     MULAS = 299,
-     MNSAS = 300,
-     ADDAS = 301,
-     OR = 302,
-     AND = 303,
-     NNEQ = 304,
-     EEQU = 305,
-     NEQ = 306,
-     EQU = 307,
-     INSTANCEOF = 308,
-     GEQ = 309,
-     LEQ = 310,
-     URSHF = 311,
-     RSHF = 312,
-     LSHF = 313,
-     VOID = 314,
-     TYPEOF = 315,
-     DEC = 316,
-     INC = 317,
-     NEG = 318,
-     MAX_PRI = 319
-   };
+/* Put the tokens into the symbol table, so that GDB and other debuggers
+   know about them.  */
+enum yytokentype
+{
+    STRING = 258,
+    IDENTIFIER = 259,
+    IF = 260,
+    ELSE = 261,
+    FOR = 262,
+    IN = 263,
+    WHILE = 264,
+    DO = 265,
+    CONTINUE = 266,
+    SWITCH = 267,
+    CASE = 268,
+    DEFAULT = 269,
+    BREAK = 270,
+    FUNC = 271,
+    RETURN = 272,
+    LOCAL = 273,
+    NEW = 274,
+    DELETE = 275,
+    TRY = 276,
+    CATCH = 277,
+    FINALLY = 278,
+    THROW = 279,
+    WITH = 280,
+    UNDEF = 281,
+    _TRUE = 282,
+    _FALSE = 283,
+    _THIS = 284,
+    ARGUMENTS = 285,
+    FNUMBER = 286,
+    REGEXP = 287,
+    __DEBUG = 288,
+    MIN_PRI = 289,
+    ARGCOMMA = 290,
+    DIVAS = 291,
+    BXORAS = 292,
+    BORAS = 293,
+    BANDAS = 294,
+    URSHFAS = 295,
+    RSHFAS = 296,
+    LSHFAS = 297,
+    MODAS = 298,
+    MULAS = 299,
+    MNSAS = 300,
+    ADDAS = 301,
+    OR = 302,
+    AND = 303,
+    NNEQ = 304,
+    EEQU = 305,
+    NEQ = 306,
+    EQU = 307,
+    INSTANCEOF = 308,
+    GEQ = 309,
+    LEQ = 310,
+    URSHF = 311,
+    RSHF = 312,
+    LSHF = 313,
+    VOID = 314,
+    TYPEOF = 315,
+    DEC = 316,
+    INC = 317,
+    NEG = 318,
+    MAX_PRI = 319
+};
 #endif
 /* Tokens.  */
 #define STRING 258
@@ -181,12 +182,12 @@ typedef int YYSTYPE;
 
 #if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
 typedef struct YYLTYPE
-{
-  int first_line;
-  int first_column;
-  int last_line;
-  int last_column;
-} YYLTYPE;
+    {
+    int first_line;
+    int first_column;
+    int last_line;
+    int last_column;
+    } YYLTYPE;
 # define yyltype YYLTYPE /* obsolescent; will be withdrawn */
 # define YYLTYPE_IS_DECLARED 1
 # define YYLTYPE_IS_TRIVIAL 1

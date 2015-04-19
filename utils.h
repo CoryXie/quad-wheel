@@ -9,6 +9,6 @@ struct ScopeChain;
 
 void utils_init(struct Value *global, int argc, char **argv);
 int utils_global_eval(struct PSTATE *ps, const char *program,
-					   struct ScopeChain *scope, struct Value *currentScope,
-					   struct Value *_this, struct Value *ret);
+                      struct ScopeChain *scope, struct Value *currentScope,
+                      struct Value *_this, struct Value *ret);
 #endif

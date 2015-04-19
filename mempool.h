@@ -1,7 +1,7 @@
 #ifndef __MEM_POOL_H__
 #define __MEM_POOL_H__
 
-/* 
+/*
  * struct relationship:
  * |------------------------MemBlock------------------------|
  * |                        ________        __________      |
@@ -21,21 +21,24 @@
 #define MP_BLOCK_SIZE	1024
 
 /* per node size is (sizeof(Memnode) + mp->elemsize); */
-typedef struct Memnode {
-	struct Memnode *next;
-	unsigned int esize;
-} Memnode;
+typedef struct Memnode
+    {
+    struct Memnode *next;
+    unsigned int esize;
+    } Memnode;
 
-typedef struct Memblock {
-	struct Memblock *next;
-} Memblock;
+typedef struct Memblock
+    {
+    struct Memblock *next;
+    } Memblock;
 
-typedef struct Mempool {
-	unsigned int elemsize;
+typedef struct Mempool
+    {
+    unsigned int elemsize;
 
-	Memblock *blockhead;
-	Memnode *nodehead;
-} *mpool_t;
+    Memblock *blockhead;
+    Memnode *nodehead;
+    } *mpool_t;
 
 void mpool_init();
 
@@ -53,7 +56,7 @@ void mpool_free(void *p, mpool_t mpool);
 
 /* general malloc/free replacement
  * cutting down calling times of malloc and free,
- * but some times slower then native malloc/free, 
+ * but some times slower then native malloc/free,
  * don't know why, if so
  * simply USE DONT_USE_POOL to disable mempool
  */

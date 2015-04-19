@@ -17,5 +17,5 @@
 #define todo(format,args...) \
 	do { fprintf(stderr, "[TODO:%s:%d] "format"\nunfinish version, sorry\n", \
 		__FILE__, __LINE__, ##args); exit(1); }while(0)
-		
+
 #endif

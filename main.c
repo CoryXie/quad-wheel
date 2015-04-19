@@ -19,71 +19,78 @@
 extern int yyparse(PSTATE *ps);
 
 int Usage()
-{
-	fprintf(stderr, "Usage: smallscript [input file] [arguments]\n");
-	return -1;
-}
+    {
+    fprintf(stderr, "Usage: smallscript [input file] [arguments]\n");
+    return -1;
+    }
 
 int main(int argc, char **argv)
-{
-	FILE *input = stdin;
-	
-	argv++; /* goes to the real parameters */
-	argc--; /* actual number of arguments */
-	
-	if (argc > 0) {
-		input = fopen(argv[0], "r"); /* open input file for reading */
-		if (!input) {
-			fprintf(stderr, "Can not open '%s'\n", argv[0]);
-			return Usage();
-		}
-		argv++;
-		argc--;
-	}
+    {
+    FILE *input = stdin;
 
-	/* subsystem init */
-	mpool_init();			/* general mempool */
-	objects_init();
-	
-	PSTATE *ps = pstate_new_from_file(input);
-	yyparse(ps);
-	
-	if (!ps->err_count) {
-		Value ret;
+    argv++; /* goes to the real parameters */
+    argc--; /* actual number of arguments */
 
-		/* current scope, also global */
-		Value *csc = value_new();
-		value_make_object(*csc, object_new());
+    if (argc > 0)
+        {
+        input = fopen(argv[0], "r"); /* open input file for reading */
+        if (!input)
+            {
+            fprintf(stderr, "Can not open '%s'\n", argv[0]);
+            return Usage();
+            }
+        argv++;
+        argc--;
+        }
 
-		/* top this and prototype chain */
-		proto_init(csc);
+    /* subsystem init */
+    mpool_init();			/* general mempool */
+    objects_init();
 
-		/* global function, debugger, etc */
-		utils_init(csc, argc, argv);
+    PSTATE *ps = pstate_new_from_file(input);
+    yyparse(ps);
 
-		/* file system extern init */
-		filesys_init(csc);
+    if (!ps->err_count)
+        {
+        Value ret;
 
-		/* initial scope chain, nothing */
-		ScopeChain *gsc = scope_chain_new(0);
-		
+        /* current scope, also global */
+        Value *csc = value_new();
+        value_make_object(*csc, object_new());
+
+        /* top this and prototype chain */
+        proto_init(csc);
+
+        /* global function, debugger, etc */
+        utils_init(csc, argc, argv);
+
+        /* file system extern init */
+        filesys_init(csc);
+
+        /* initial scope chain, nothing */
+        ScopeChain *gsc = scope_chain_new(0);
+
 #ifdef DEBUG
-		codes_print(ps->opcodes);
-		printf("------------------------\n");
+        codes_print(ps->opcodes);
+        printf("------------------------\n");
 #endif
-		if (eval(ps, ps->opcodes, gsc, csc, csc, &ret)) {
-			die("Uncatched error");
-		} else {
-			extern long sp;
-			if (sp != 0) {
-				bug("Stack not ballence after execute script\n");
-			}
-		}
-		scope_chain_free(gsc);
-		value_free(csc);
-	}
-	fclose(input);
-	pstate_free(ps);
-	return 0;
-}
+        if (eval(ps, ps->opcodes, gsc, csc, csc, &ret))
+            {
+            die("Uncatched error");
+            }
+        else
+            {
+            extern long sp;
+            if (sp != 0)
+                {
+                bug("Stack not ballence after execute script\n");
+                }
+            }
+        scope_chain_free(gsc);
+        value_free(csc);
+        }
+    fclose(input);
+    pstate_free(ps);
+    return 0;
+    }
 

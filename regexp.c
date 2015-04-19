@@ -9,14 +9,14 @@
 #include "error.h"
 
 regex_t *regex_new(const char *str, int compflag)
-{
-	regex_t *reg = malloc(sizeof(regex_t));
-	if (!reg) die("Out of memory\n");
-	
-	if (regcomp(reg, str, compflag)) 
-		die("Invalid regex string '%s'\n", str);
+    {
+    regex_t *reg = malloc(sizeof(regex_t));
+    if (!reg) die("Out of memory\n");
 
-	return reg;
-}
+    if (regcomp(reg, str, compflag))
+        die("Invalid regex string '%s'\n", str);
+
+    return reg;
+    }
 
 
