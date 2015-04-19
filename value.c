@@ -17,7 +17,7 @@ static UNISTR(6) LENGTH = { 6, { 'l', 'e', 'n', 'g', 't', 'h' } };
 ObjKey *objkey_new(const unichar *strkey, int flag)
 {
 	void *p = mm_alloc(unistrlen(strkey) * sizeof(unichar) + sizeof(int) * 2);
-	ObjKey *ok = (ObjKey *)(((int)p) + sizeof(int) * 2);
+	ObjKey *ok = (ObjKey *)(((long)p) + sizeof(int) * 2);
 
 	unistrcpy((unichar *)ok, strkey);
 	KEYFLAG(ok) = flag;
@@ -29,7 +29,7 @@ ObjKey *objkey_dup(const ObjKey *ori)
 {
 	int size = unistrlen(ori) * sizeof(unichar) + sizeof(int) * 2;
 	int *p = mm_alloc(size);
-	memcpy(p, (void *)(((int)ori) - sizeof(int) * 2), size);
+	memcpy(p, (void *)(((long)ori) - sizeof(int) * 2), size);
 
 	return (ObjKey *) (&p[2]);
 }
@@ -46,7 +46,7 @@ static void objkey_free(void* data)
 {
 	/* printf("Free key: "); 
 	_uniprint(data); */
-	mm_free((void *)(((int)data) - sizeof(int) * 2));
+	mm_free((void *)(((long)data) - sizeof(int) * 2));
 }
 
 IterObj *iterobj_new()
@@ -162,6 +162,8 @@ Object *object_make_array(Value *items, int count)
 Value *value_new()
 {
 	Value *v = mpool_alloc(value_pool);
+	if (v == NULL)
+		return NULL;
 	memset(v, 0, sizeof(Value));
 	return v;
 }
@@ -235,7 +237,7 @@ void value_tostring(Value *v)
 			} else if (ieee_isnan(v->d.num)) {
 				ntxt = USNAN.unistr;
 			} else {
-				int s = ieee_infinity(v->d.num);
+				int s = ieee_isinfinity(v->d.num);
 				if (s > 0) ntxt = USINF.unistr;
 				else if (s < 0) ntxt = USNINF.unistr;
 				else bug("Ieee function got problem");
@@ -258,7 +260,7 @@ void value_tostring(Value *v)
 					} else if (ieee_isnan(obj->d.num)) {
 						ntxt = USNAN.unistr;
 					} else {
-						int s = ieee_infinity(obj->d.num);
+						int s = ieee_isinfinity(obj->d.num);
 						if (s > 0) ntxt = USINF.unistr;
 						else if (s < 0) ntxt = USNINF.unistr;
 						else bug("Ieee function got problem");

@@ -2,10 +2,12 @@
 #include "number.h"
 
 #ifndef _NO_LL_SUPPORT
+#ifndef _NAN_MATH_SUPPORT
 static const long long _numnan = 0x7ff8000000000000LL;
 static const long long *NAN = &_numnan;
 static const long long _numinf = 0x7ff0000000000000LL;
 static const long long *INF = &_numinf;
+#endif
 
 #else
 	#ifndef _BIGENDIAN

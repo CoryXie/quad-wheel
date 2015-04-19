@@ -9,6 +9,7 @@
 #include "func.h"
 #include "proto.h"
 #include "eval.h"
+#include "number.h"
 
 static void print_value(Value *v, int quote);
 static int _object_print_callback(void *key, void *value, void *userdata)
@@ -50,7 +51,7 @@ static void print_value(Value *v, int quote)
 			} else if (ieee_isnan(v->d.num)) {
 				printf("NaN");
 			} else {
-				int s = ieee_infinity(v->d.num);
+				int s = ieee_isinfinity(v->d.num);
 				if (s > 0) printf("+Infinity");
 				else if (s < 0) printf("-Infinity");
 				else bug("Ieee function got problem");

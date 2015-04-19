@@ -4,7 +4,7 @@
 #include "unichar.h"
 
 /*
- * since nan/infinity math function are not supported in var c compiler,
+ * since nan/infinity math function are not supported in various c compiler,
  * we make our own here, in well supported compiler, you may replace those
  * mass to build-in function, such as isnan, isfinite.
  * 
@@ -48,7 +48,8 @@
 
 #define ieee_isnormal(a) 	(EXP(a) != MAXEXP)
 #define ieee_isnan(a)		(EXP(a) == MAXEXP && !FRAZERO(a))
-#define ieee_infinity(a)	((EXP(a) == MAXEXP && FRAZERO(a)) ? (a > 0 ? 1 : -1) : 0)
+#define ieee_isinfinity(a)	((EXP(a) == MAXEXP && FRAZERO(a)) ? (a > 0 ? 1 : -1) : 0)
+
 
 double ieee_makeinf(int i);
 double ieee_makenan();

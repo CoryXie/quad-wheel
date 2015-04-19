@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
 
 #include "code.h"
@@ -77,6 +78,8 @@ const char *op_names[OP_LASTOP] = {
 OpCodes *codes_new(int size)
 {
 	OpCodes *ret = malloc(sizeof(OpCodes));
+	if (ret == NULL)
+		return NULL;
 	memset(ret, 0, sizeof(OpCodes));
 	ret->codes = malloc(sizeof(OpCode) * size);
 	ret->code_size = size;
@@ -122,7 +125,7 @@ OpCodes *codes_join4(OpCodes *a, OpCodes *b, OpCodes *c, OpCodes *d)
 
 #define NEW_CODES(code, extra) do {					\
 		OpCodes *r = codes_new(3);					\
-		codes_insert(r, (code), (void *)(extra));	\
+		codes_insert(r, (code), (void *)((long)(extra)));	\
 		return r;									\
 	} while(0)
 
@@ -254,7 +257,7 @@ void code_reserved_replace(OpCodes *ops, int step_len, int break_only,
 					ops->codes[i].data = jpinfo_new(ops->code_len - i, topop);
 					ops->codes[i].op = OP_JMPPOP;
 				} else {
-					ops->codes[i].data = (void *)(ops->code_len - i);
+					ops->codes[i].data = (void *)(long)(ops->code_len - i);
 					ops->codes[i].op = OP_JMP;
 				}
 			}
@@ -265,7 +268,7 @@ void code_reserved_replace(OpCodes *ops, int step_len, int break_only,
 				ops->codes[i].data = jpinfo_new(step_len + ops->code_len - i, topop);
 				ops->codes[i].op = OP_JMPPOP;
 			} else {
-				ops->codes[i].data = (void *)(step_len + ops->code_len - i);
+				ops->codes[i].data = (void *)(long)(step_len + ops->code_len - i);
 				ops->codes[i].op = OP_JMP;
 			}
 		}
@@ -284,15 +287,15 @@ void code_decode(OpCode *op, int currentip)
 		op->op == OP_DELETE || op->op == OP_CHTHIS ||
  		op->op == OP_OBJECT || op->op == OP_ARRAY ||
  		op->op == OP_SHF ||
-		op->op == OP_INC || op->op == OP_DEC) printf("\t%d\n", (int)op->data);
+		op->op == OP_INC || op->op == OP_DEC) printf("\t%p\n", op->data);
 	else if (op->op == OP_PUSHNUM) printf("\t%g\n", *((double *)op->data));
 	else if (op->op == OP_PUSHSTR || op->op == OP_LOCAL ||
 			 op->op == OP_SCATCH) printf("\t\"%s\"\n", tochars(op->data ? op->data:"(NoCatch)"));
 	else if (op->op == OP_PUSHVAR) printf("\tvar: \"%s\"\n", tochars(((FastVar *)op->data)->var.varname));
-	else if (op->op == OP_PUSHFUN) printf("\tfunc: 0x%x\n", (int)op->data);
+	else if (op->op == OP_PUSHFUN) printf("\tfunc: %p\n", op->data);
  	else if (op->op == OP_JTRUE || op->op == OP_JFALSE ||
 			 op->op == OP_JTRUE_NP || op->op == OP_JFALSE_NP ||
-			 op->op == OP_JMP) printf("\t{%d}\t#%d\n", (int)op->data, currentip + (int)op->data);
+			 op->op == OP_JMP) printf("\t{%p}\t#%p\n", op->data, currentip + (char*)op->data);
 	else if (op->op == OP_JMPPOP) {
 		JmpPopInfo *jp = op->data;
 		printf("\t{%d},%d\t#%d\n", jp->off, jp->topop, currentip + jp->off);

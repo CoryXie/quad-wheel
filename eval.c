@@ -25,20 +25,20 @@ Value stack[65536];
 /* with a function call, opcode chthis will make obj_this assign to new this */
 Value obj_this[65536];
 
-int sp = 0;
+long sp = 0;
 
 #define TOP	(stack[sp-1])
 #define TOQ (stack[sp-2])
 
 /* pop n value from stack */
 #define pop_n(n) do {										\
-	int t = (int)(n);										\
+	long t = (long)(n);										\
 	while (t > 0) {											\
 		value_erase(obj_this[sp-t]);						\
 		value_erase(stack[sp-t]);							\
 		--t;												\
 	}														\
-	sp -= (int)(n);											\
+	sp -= (long)(n);											\
 } while(0)
 
 #define pop() do {										\
@@ -87,7 +87,7 @@ int sp = 0;
 	pop();											\
 }
 
-#define common_bitwise_opr(opr) {						\
+#define common_bitwise_opr(opr) {					\
 	int a, b;										\
 	topeval2();										\
 	if (!is_number(&TOP)) value_tonumber(&TOP);		\
@@ -325,7 +325,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 				sp++;
 				break;
 			case OP_PUSHBOO:
-				value_make_bool(stack[sp], (int)ip->data);
+				value_make_bool(stack[sp], ip->data);
 				sp++;
 				break;
 			case OP_PUSHFUN: {
@@ -578,7 +578,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 				int t1 = (int)TOQ.d.num;
 				int t2 = ((unsigned int)TOP.d.num) & 0x1f;
 				if (ip->data) {					/* thift right */
-					if ((int)ip->data == 2) {	/* unsigned shift */
+					if ((long)ip->data == 2) {	/* unsigned shift */
 						unsigned int t3 = (unsigned int)t1;
 						t3 >>= t2;
 						value_make_number(TOQ, t3);
@@ -594,7 +594,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 				break;
 			}
 			case OP_ASSIGN: {
-				if ((int)ip->data == 1) {
+				if ((long)ip->data == 1) {
 					topeval1();
 					if (TOQ.vt != VT_VARIABLE) die("operand not a left value\n");
 
@@ -626,7 +626,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 						value_make_string(TOP, unistrdup(_CALLEE_.unistr));
 					}
 				}
-				value_subscript(&TOQ, &TOP, &res, (int)ip->data);
+				value_subscript(&TOQ, &TOP, &res, (long)ip->data);
 				value_erase(TOQ);
 				TOQ = res;		/* don't need to erase */
 				pop();
@@ -688,7 +688,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 			case OP_JTRUE_NP:
 			case OP_JFALSE_NP: {
 				topeval1();
-				int off = (int)ip->data - 1; 
+				long off = (long)ip->data - 1;
 				int r = value_istrue(&TOP);
 				
 				if (ip->op == OP_JTRUE || ip->op == OP_JFALSE) pop();
@@ -698,7 +698,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 			case OP_JMPPOP: 
 				pop_n(((JmpPopInfo *)ip->data)->topop);
 			case OP_JMP: {
-				int off = ip->op == OP_JMP ? (int)ip->data - 1
+				long off = ip->op == OP_JMP ? (long)ip->data - 1
 							: ((JmpPopInfo *)ip->data)->off - 1;
 
 				while (1) {
@@ -737,7 +737,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 			case OP_FCALL: 
 			case OP_NEWFCALL: {
 				int as_constructor = (ip->op == OP_NEWFCALL);
-				int stackargc = (int)ip->data;
+				long stackargc = (long)ip->data;
 				topevaln(stackargc + 1);
 
 				int tocall_index = sp - stackargc - 1;
@@ -818,7 +818,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 				break;
 			}
 			case OP_EVAL: {
-				int stackargc = (int)ip->data;
+				long stackargc = (long)ip->data;
 				topevaln(stackargc);
 
 				Value spret = {0};
@@ -849,7 +849,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 				return 0;
 			}
 			case OP_DELETE: {
-				int count = (int)ip->data;
+				long count = (long)ip->data;
 				if (count == 1) {
 					if (TOP.vt != VT_VARIABLE) die("delete a right value\n");
 					Value *v = TOP.d.lval;
@@ -868,7 +868,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 				break;
 			}
 			case OP_OBJECT: {
-				int itemcount = (int)ip->data;
+				long itemcount = (long)ip->data;
 				topevaln(itemcount * 2);
 				Object *obj = object_make(&stack[sp-itemcount*2], itemcount*2);
 				pop_n(itemcount * 2 - 1);		/* one left */
@@ -877,7 +877,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 				break;
 			}
 			case OP_ARRAY: {
-				int itemcount = (int)ip->data;
+				long itemcount = (long)ip->data;
 				topevaln(itemcount);
 				Object *obj = object_make_array(&stack[sp-itemcount], itemcount);
 				pop_n(itemcount - 1);
@@ -1001,7 +1001,7 @@ int eval(PSTATE *ps, OpCodes *opcodes,
 				TryList *n = trylist_new(TL_WITH, scope, currentScope);
 				
 				n->d.wd.wstart = ip;
-				n->d.wd.wend = n->d.wd.wstart + (int)ip->data;
+				n->d.wd.wend = n->d.wd.wstart + (long)ip->data;
 
 				push_try(trylist, n);
 				

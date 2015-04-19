@@ -61,7 +61,7 @@ typedef struct UserDataReg {
  */
 typedef unichar ObjKey;
 
-#define KEYFLAG(ok) (*((int *)(((int)(ok)) - 2 * sizeof(int))))
+#define KEYFLAG(ok) (*((int *)(((long)(ok)) - 2 * sizeof(int))))
 #define OBJKEY(_len) struct{int flag;UNISTR(_len) str;}
 
 /* Scope chain */
@@ -165,7 +165,7 @@ typedef struct Value {
 
 #define value_make_bool(v, b) do {				\
 	(v).vt = VT_BOOL;							\
-	(v).d.val = (b);							\
+	(v).d.val = (long)(b);						\
 } while(0)
 
 #define value_make_string(v, s) do {			\

@@ -4,7 +4,7 @@ CFILES = $(ACFILES) lexer.c code.c eval.c func.c value.c regexp.c main.c pstate.
 		number.c proto.number.c proto.array.c mempool.c
 OBJS    = $(CFILES:.c=.o)
 DEFIN	= -DUSE_FILESYS_EX
-CFLAGS	= -O2 -Wall -Werror -ansi $(DEFIN)
+CFLAGS	= -O2 -Wall -fno-strict-aliasing $(DEFIN)
 YACC	= bison -v
 TARGET	= quadwheel
 

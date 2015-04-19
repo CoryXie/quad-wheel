@@ -9,11 +9,11 @@ typedef unsigned short unichar;
  * 
  * static UNISTR(5) hello = { 5, { 'h', 'e', 'l', 'l', 'o' } };
  * 
- * comment: alway declare one more byte for objkey
+ * comment: always declare one more byte for objkey
  */
 #define UNISTR(_len) struct{int len;unichar unistr[(_len)+1];}
 
-#define unistrlen(str) (*((int *)(((int)(str)) - sizeof(int))))
+#define unistrlen(str) (*((int *)(((long)(str)) - sizeof(int))))
 
 unichar *unistrdup(const unichar *str);
 unichar *unistrdup_str(const char *str);

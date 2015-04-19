@@ -10,7 +10,7 @@ unichar *unistrdup(const unichar *str)
 	int len = unistrlen(str);
 
 	unichar *r = mm_alloc((len + 1) * sizeof(unichar) + sizeof(int));
-	unichar *rr = (unichar *)((int)r + sizeof(int));
+	unichar *rr = (unichar *)((long)r + sizeof(int));
 	
 	*((int *)r) = len;
 	
@@ -23,7 +23,7 @@ unichar *unistrdup_str(const char *str)
 	int len = strlen(str);
 
 	unichar *r = mm_alloc((len + 1) * sizeof(unichar) + sizeof(int));
-	unichar *rr = (unichar *)((int)r + sizeof(int));
+	unichar *rr = (unichar *)((long)r + sizeof(int));
 	int i;
 	
 	*((int *)r) = len;
@@ -48,7 +48,7 @@ unichar *unisubstrdup(const unichar *a, int start, int len)
 	}
 	
 	unichar *r = mm_alloc((maxcpy + 1) * sizeof(unichar) + sizeof(int));
-	unichar *rr = (unichar *)((int)r + sizeof(int));
+	unichar *rr = (unichar *)((long)r + sizeof(int));
 
 	*((int *)r) = maxcpy;
 	
@@ -75,7 +75,7 @@ void _uniprint(unichar *s)
 
 void unifree(unichar *d)
 {
-	mm_free((void *)(((int)d) - sizeof(int)));
+	mm_free((void *)(((long)d) - sizeof(int)));
 }
 
 int unistrchr(const unichar *str, int c)
@@ -103,7 +103,7 @@ const unichar *tounichars(const char *str)
 {
 	static unichar buf[65536];
 	int *len = (int *)buf;
-	unichar *b = (unichar *)((int)buf + sizeof(int));
+	unichar *b = (unichar *)((long)buf + sizeof(int));
 	int i;
 	
 	for (i = 0; str[i] && i < 65530; ++i) {
@@ -133,7 +133,7 @@ unichar *unistrcat(const unichar *str1, const unichar *str2)
 	int len = unistrlen(str1) + unistrlen(str2);
 
 	unichar *r = mm_alloc((len + 1) * sizeof(unichar) + sizeof(int));
-	unichar *rr = (unichar *)((int)r + sizeof(int));
+	unichar *rr = (unichar *)((long)r + sizeof(int));
 
 	*((int *)r) = len;
 	

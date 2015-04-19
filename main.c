@@ -28,11 +28,11 @@ int main(int argc, char **argv)
 {
 	FILE *input = stdin;
 	
-	argv++;
-	argc--;
+	argv++; /* goes to the real parameters */
+	argc--; /* actual number of arguments */
 	
 	if (argc > 0) {
-		input = fopen(argv[0], "r");
+		input = fopen(argv[0], "r"); /* open input file for reading */
 		if (!input) {
 			fprintf(stderr, "Can not open '%s'\n", argv[0]);
 			return Usage();
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 		/* top this and prototype chain */
 		proto_init(csc);
 
-		/* global funtion, debugger, etc */
+		/* global function, debugger, etc */
 		utils_init(csc, argc, argv);
 
 		/* file system extern init */
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 		if (eval(ps, ps->opcodes, gsc, csc, csc, &ret)) {
 			die("Uncatched error");
 		} else {
-			extern int sp;
+			extern long sp;
 			if (sp != 0) {
 				bug("Stack not ballence after execute script\n");
 			}
